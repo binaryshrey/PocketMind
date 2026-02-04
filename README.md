@@ -1,4 +1,4 @@
-# PocketMind
+# PocketMind [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/binaryshrey/PocketMind/blob/main/PocketMind.ipynb)
 
 ### Privacy-Focused On-Device Personal Knowledge Summarization Application
 
