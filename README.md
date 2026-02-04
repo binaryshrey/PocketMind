@@ -23,7 +23,7 @@ Design an on-device summarization system that preserves privacy, handles long do
 
 ## System Architecture
 
-Personal Documents → Chunking → Local Retrieval → On-Device LLM → Controlled Generation → Summary
+```Personal Documents → Chunking → Local Retrieval → On-Device LLM → Controlled Generation → Summary```
 
 ## Model Choice
 
@@ -32,6 +32,30 @@ Personal Documents → Chunking → Local Retrieval → On-Device LLM → Contro
 - Instruction-tuned for clean summaries
 - Strong technical summarization
 - Suitable for edge deployment when quantized
+
+```
+"""
+Qwen2.5-3B-Instruct
+- Instruction-tuned → clean summaries
+- Strong technical summarization
+- Stable generation
+- Suitable for edge / on-device scenarios
+"""
+
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+MODEL_NAME = "Qwen/Qwen2.5-3B-Instruct"
+
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+
+model = AutoModelForCausalLM.from_pretrained(
+    MODEL_NAME,
+    dtype=torch.float16,
+    device_map="auto"
+)
+
+model.eval()
+```
 
 ## Data Handling
 
@@ -61,9 +85,53 @@ A heuristic faithfulness metric estimates grounding by comparing summaries with 
 ## Evaluation Metrics
 
 - Latency
+```
+"""
+Latency measurement
+
+Measures end-to-end summarization time.
+Simulates on-device responsiveness.
+"""
+
+import time
+
+start = time.time()
+_ = summarize(query)
+latency = time.time() - start
+
+print(f"Latency: {latency:.2f} seconds")
+Latency: 14.57 seconds
+```
+
+
 - Context size
+```
+context_sizes = [2, 3, 4, 5]
+```
+
 - Hallucination rate
+```
+"""
+Faithfulness metric (heuristic)
+
+Purpose:
+- Estimate how much of the summary is grounded
+- Not perfect, but useful for trend analysis
+"""
+
+def hallucination_rate(summary, source_chunks):
+    supported = 0
+    for chunk in source_chunks:
+        if any(word in summary.lower() for word in chunk.lower().split()[:30]):
+            supported += 1
+    return 1 - supported / max(1, len(source_chunks))
+rate = hallucination_rate(summary, retrieved_chunks)
+print(f"Hallucination rate (lower is better): {rate:.2f}")
+Hallucination rate (lower is better): 0.00
+```
 - Tradeoff plots (latency vs context)
+![Latency](https://raw.githubusercontent.com/binaryshrey/PocketMind/refs/heads/main/assets/latencyVcontextsize.png)
+![Context size](https://github.com/binaryshrey/PocketMind/blob/main/assets/faithfullnessVcontextsize.png)
 
 ## Privacy by Design
 
