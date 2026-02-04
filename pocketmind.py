@@ -83,12 +83,6 @@ for doc in documents:
 
 print(f"Total chunks created: {len(all_chunks)}")
 
-all_chunks = []
-for doc in documents:
-    all_chunks.extend(chunk_text(doc))
-
-print(f"Total chunks created: {len(all_chunks)}")
-
 """
 Local retrieval module
 - Select only relevant chunks
